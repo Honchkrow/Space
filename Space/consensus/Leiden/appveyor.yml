@@ -1,0 +1,245 @@
+# DO NOT CHANGE the "init" and "install" sections below
+
+image:
+#- Visual Studio 2015
+- Visual Studio 2017
+#- Ubuntu
+
+environment:
+  global:
+    PATH: C:\msys64\usr\bin;C:\msys64\mingw64\bin;C:\Windows;%PATH%
+    #;C:\Windows\System32
+    R_CHECK_ARGS: "--ignore-vignettes --no-examples --no-build-vignettes --no-manual"
+    R_BUILD_ARGS: '--no-build-vignettes'
+    NOT_CRAN: true
+    USE_RTOOLS: true
+    _R_CHECK_FORCE_SUGGESTS_: false
+  matrix:
+    - PYTHON: "C:\\Python35"
+      RETICULATE_PYTHON: "C:\\Python35"
+      MINICONDA: C:\Miniconda35-x64
+      CONDA_INSTALL_LOCN: C:\Miniconda35-x64
+      DISTUTILS_USE_SDK: "1"
+      R_VERSION: devel
+      R_ARCH: x64
+      platform: x64
+      PYTHON_ARCH: "64"
+      GCC_PATH: mingw_64
+    - PYTHON: "C:\\Python36"
+      RETICULATE_PYTHON: "C:\\Python36"
+      MINICONDA: C:\Miniconda36-x64
+      CONDA_INSTALL_LOCN: C:\Miniconda36-x64
+      DISTUTILS_USE_SDK: "1"
+      R_VERSION: devel
+      R_ARCH: x64
+      platform: x64
+      PYTHON_ARCH: "64"
+      GCC_PATH: mingw_64
+    - PYTHON: "C:\\Python37"
+      RETICULATE_PYTHON: "C:\\Python37"
+      MINICONDA: C:\Miniconda37-x64
+      CONDA_INSTALL_LOCN: C:\Miniconda37-x64
+      DISTUTILS_USE_SDK: "1"
+      R_VERSION: devel
+      R_ARCH: x64
+      platform: x64
+      PYTHON_ARCH: "64"
+      GCC_PATH: mingw_64
+    - PYTHON: "C:\\Python38"
+      RETICULATE_PYTHON: "C:\\Python38"
+      MINICONDA: C:\Miniconda38-x64
+      CONDA_INSTALL_LOCN: C:\Miniconda38-x64
+      DISTUTILS_USE_SDK: "1"
+      R_VERSION: devel
+      R_ARCH: x64
+      platform: x64
+      PYTHON_ARCH: "64"
+      GCC_PATH: mingw_64
+    - PYTHON: "C:\\Python35"
+      RETICULATE_PYTHON: "C:\\Python35"
+      MINICONDA: C:\Miniconda35-x64
+      CONDA_INSTALL_LOCN: C:\Miniconda35-x64
+      DISTUTILS_USE_SDK: "1"
+      R_VERSION: release
+      R_ARCH: x64
+      platform: x64
+      PYTHON_ARCH: "64"
+    - PYTHON: "C:\\Python36"
+      RETICULATE_PYTHON: "C:\\Python36"
+      MINICONDA: C:\Miniconda36-x64
+      CONDA_INSTALL_LOCN: C:\Miniconda36-x64
+      DISTUTILS_USE_SDK: "1"
+      R_VERSION: release
+      R_ARCH: x64
+      platform: x64
+      PYTHON_ARCH: "64"
+    - PYTHON: "C:\\Python37"
+      RETICULATE_PYTHON: "C:\\Python37"
+      MINICONDA: C:\Miniconda37-x64
+      CONDA_INSTALL_LOCN: C:\Miniconda37-x64
+      DISTUTILS_USE_SDK: "1"
+      R_VERSION: release
+      R_ARCH: x64
+      platform: x64
+      PYTHON_ARCH: "64"
+    - PYTHON: "C:\\Python38"
+      RETICULATE_PYTHON: "C:\\Python38"
+      MINICONDA: C:\Miniconda38-x64
+      CONDA_INSTALL_LOCN: C:\Miniconda38-x64
+      DISTUTILS_USE_SDK: "1"
+      R_VERSION: release
+      R_ARCH: x64
+      platform: x64
+      PYTHON_ARCH: "64"
+    - PYTHON: "C:\\Python35"
+      RETICULATE_PYTHON: "C:\\Python35"
+      MINICONDA: C:\Miniconda35-x64
+      CONDA_INSTALL_LOCN: C:\Miniconda35-x64
+      DISTUTILS_USE_SDK: "1"
+      R_VERSION: stable
+      R_ARCH: x64
+      platform: x64
+      PYTHON_ARCH: "64"
+    - PYTHON: "C:\\Python36"
+      RETICULATE_PYTHON: "C:\\Python36"
+      MINICONDA: C:\Miniconda36-x64
+      CONDA_INSTALL_LOCN: C:\Miniconda36-x64
+      DISTUTILS_USE_SDK: "1"
+      R_VERSION: stable
+      R_ARCH: x64
+      platform: x64
+      PYTHON_ARCH: "64"
+    - PYTHON: "C:\\Python37"
+      RETICULATE_PYTHON: "C:\\Python37"
+      MINICONDA: C:\Miniconda37-x64
+      CONDA_INSTALL_LOCN: C:\Miniconda37-x64
+      DISTUTILS_USE_SDK: "1"
+      R_VERSION: stable
+      R_ARCH: x64
+      platform: x64
+      PYTHON_ARCH: "64"
+    - PYTHON: "C:\\Python38"
+      RETICULATE_PYTHON: "C:\\Python38"
+      MINICONDA: C:\Miniconda38-x64
+      CONDA_INSTALL_LOCN: C:\Miniconda38-x64
+      DISTUTILS_USE_SDK: "1"
+      R_VERSION: stable
+      R_ARCH: x64
+      platform: x64
+      PYTHON_ARCH: "64"
+
+
+matrix:
+  fast_finish: true
+  exclude:
+    - platform: x64
+      PYTHON_ARCH: "32"
+    - platform: x86
+      PYTHON_ARCH: "64"
+
+# Download script file from GitHub
+init:
+  - ps: |
+        $ErrorActionPreference = "Stop"
+        Invoke-WebRequest http://raw.github.com/krlmlr/r-appveyor/master/scripts/appveyor-tool.ps1 -OutFile "..\appveyor-tool.ps1"
+        Import-Module '..\appveyor-tool.ps1'
+  - cmd: "ECHO %PYTHON_VERSION% %CONDA_INSTALL_LOCN%"
+  - cmd: "set PATH=%MINICONDA%;%MINICONDA%\\Scripts;%MINICONDA%\\Library\\bin;%PATH%"
+
+install:
+  # If there is a newer build queued for the same PR, cancel this one.
+  # The AppVeyor 'rollout builds' option is supposed to serve the same
+  # purpose but it is problematic because it tends to cancel builds pushed
+  # directly to master instead of just PR builds (or the converse).
+  # credits: JuliaLang developers.
+  - ps: if ($env:APPVEYOR_PULL_REQUEST_NUMBER -and $env:APPVEYOR_BUILD_NUMBER -ne ((Invoke-RestMethod `
+        https://ci.appveyor.com/api/projects/$env:APPVEYOR_ACCOUNT_NAME/$env:APPVEYOR_PROJECT_SLUG/history?recordsNumber=50).builds | `
+        Where-Object pullRequestId -eq $env:APPVEYOR_PULL_REQUEST_NUMBER)[0].buildNumber) { `
+          throw "There are newer queued builds for this pull request, failing early." }
+  - ECHO "Filesystem root:"
+  - ps: "ls \"C:/\""
+
+  # Check that we have the expected version and architecture for Python
+  - "python --version"
+
+  # setup conda environment for building
+  - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
+  # Check that we have the expected version and architecture for Python
+  - "python -c \"import sys; print(sys.version)\""
+  # Install the build and runtime dependencies of the project.
+  - "conda update -q --yes conda"
+  # Install constructor, take into account what vc version we target later in the build..
+  - "conda install -q --yes 'constructor>=2.0'"
+  # list package versions
+  - "conda list"
+  # build installer
+  - conda info --envs
+  - conda config --set always_yes yes --set changeps1 no
+  - conda config --add channels conda-forge
+  - conda config --add channels vtraag
+  - conda install -y -q conda pip
+  #- conda init cmd.exe
+  #- conda install -n r-reticulate -y q igraph
+  - conda install -y numpy scipy
+  - conda install -y python-igraph
+  - conda install -y -c conda-forge leidenalg
+  - conda install -y -c intel mkl
+
+  # Upgrade to the latest version of pip to avoid it displaying warnings
+  # about it being out of date.
+  #- "python -m pip install --upgrade pip"
+
+  # Install the build dependencies of the project. If some dependencies contain
+  # compiled extensions and are not provided as pre-built wheel packages,
+  # pip will build them from source using the MSVC compiler matching the
+  # target Python version and architecture
+  #- "%CMD_IN_ENV% pip install leidenalg python-igraph numpy"
+
+
+#install:
+  #install python libraries
+  #- "pip install --upgrade pip"
+  #- "pip install leidenalg"
+  - ps: Bootstrap
+
+cache:
+  - C:\RLibrary
+
+# Adapt as necessary starting from here
+
+build_script:
+  - R -e 'install.packages("igraph")'
+  - R -e 'install.packages("RColorBrewer")'
+  - R -e 'install.packages("rmarkdown")'
+  - R -e 'install.packages("knitr")'
+  - travis-tool.sh install_github igraph/rigraph
+  - travis-tool.sh install_deps
+  #- "pip install -q graphviz" #includes python-igraph
+  #- "pip install -q leidenalg"
+
+
+test_script:
+  - travis-tool.sh run_tests
+
+on_failure:
+  - 7z a failure.zip *.Rcheck\*
+  - appveyor PushArtifact failure.zip
+
+artifacts:
+  - path: '*.Rcheck\**\*.log'
+    name: Logs
+
+  - path: '*.Rcheck\**\*.out'
+    name: Logs
+
+  - path: '*.Rcheck\**\*.fail'
+    name: Logs
+
+  - path: '*.Rcheck\**\*.Rout'
+    name: Logs
+
+  - path: '\*_*.tar.gz'
+    name: Bits
+
+  - path: '\*_*.zip'
+    name: Bits

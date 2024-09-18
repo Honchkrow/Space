@@ -1,0 +1,51 @@
+^Meta$
+^doc$
+#^Meta$
+#^doc$
+^CRAN-RELEASE$
+^travis_setup\.R$
+^travis_setup.sh$
+^\.travis_setup\.R$
+^appveyor\.yml$
+^\.travis\.yml$
+^\.circleci$
+^codecov\.yml$
+^LICENSE\.md$
+^CITATION.cff$
+^cran-comments\.md$
+^.*\.pdf$
+^.*\.png$
+^.*\.Rproj$
+^\.Rproj\.user$
+^build.cmd$
+^\.revdep$
+^\ .DS_Store$
+revdep
+images
+lastMiKTeXException
+
+## Files to ignore when building package
+
+## For github checks
+.travis.yml
+.gitignore
+.git
+^README
+^LICENSE.md
+^images$
+## Temporary files
+^R/.+~$
+^vignettes/.+~$
+^vignettes/cache
+^vignettes/.*cache
+^vignettes/.*files
+^vignettes/figure
+^vignettes/mnist
+^vignettes/.*rprof$
+^vignettes/.*html$
+^vignettes/.*png$
+^circle\.yml$
+^vignettes/bash_py_time$
+^revdep$
+^aarhus_mplex.rda$
+^CRAN-SUBMISSION$
