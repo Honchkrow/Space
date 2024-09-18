@@ -177,11 +177,11 @@ gt = adata.obs["gt"]
 Then, set the parameters.
 
 ```python
-k = 20  # number of clusters
-epochs = 120
-seed = 666
-alpha = 1  # recommended value
-learning_rate = 0.0001
+k = 20                   # number of clusters
+epochs = 120             # epoch in training
+seed = 666               # random seed
+alpha = 1                # recommended value
+learning_rate = 0.0001   # learning rate in training
 ```
 
 Now, read the results from 10 SOTA methods.
@@ -193,7 +193,68 @@ mul_reults = pd.read_csv(
     index_col=0
 )
 mul_reults = mul_reults.iloc[:, 2:]
+
 ```
+
+
+Now, we can observe the consistency between the results of different methods.
+
+```python
+plot_results_ari(mul_reults)
+```
+
+<center>
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="./Images/consistency.png">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">Consistency between different methods</div>
+</center>
+
+
+```python
+# Discard methods that show poor consistency
+mul_reults = mul_reults.drop("SpaceFlow", axis=1)
+mul_reults = mul_reults.drop("MENDER", axis=1)
+
+# compute the positional similarity matrix
+pos_similarity = calculate_location_adj(adata.obsm["spatial"], l=123)
+
+model = Space.Space(
+    get_bool_martix(mul_reults),
+    pos_similarity,
+    epochs=epochs,
+    gt=gt.values,
+    k=k,
+    seed=seed,
+    alpha=alpha,
+    beta=1,
+    learning_rate=learning_rate,
+)
+
+# tarining model
+con_martix = model.train()
+
+# set spectral cluster model
+sc = SpectralClustering(n_clusters=k, affinity="precomputed", random_state=666)
+
+# clustering
+labels = sc.fit_predict(con_martix)
+
+adata.obs["consensus"] = labels
+
+ari = adjusted_rand_score(labels, gt.values)
+
+print(ari)
+```
+
+you will obtain a result from Space with an ARI of 0.648.
+
+*<font color=red>In most cases, Space does not yield a fixed result. This is not due to an issue with Space, but because some methods exhibit randomness even when the random seed is fixed. Please refer to [this](https://github.com/QIFEIDKN/STAGATE/issues/10) for more information. However, the variations in the results we obtain are minimal. The outcomes are stable across multiple runs.</font>*
+
 
 #### Visualization
 
@@ -211,3 +272,4 @@ mul_reults = mul_reults.iloc[:, 2:]
 
 
 ## 4 Citation
+
