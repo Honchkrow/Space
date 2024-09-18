@@ -4,7 +4,7 @@ Reconciling Multiple Spatial Domain Identification Algorithms via Consensus Clus
 
 ## 1. Introduction
 
-**Space** is a spatial domain identification method from <u>**spa**</u>tially resolved transcriptomics (SRT) data using <u>**c**</u>onsensus clust<u>**e**</u>ring. It integrates **10 SOTA algorithms**. Space selects reliable algorithms by measuring their consistency. Then, it constructs a consensus matrix to integrate the outputs from multiple algorithms. We introduce **similarity loss**, **spatial loss**, and **low-rank loss** in Space to enhance accuracy and optimize computational efficiency.
+**Space** is a spatial domain identification method from <u>spa</u>tially resolved transcriptomics (SRT) data using <u>c</u>onsensus clust<u>e</u>ring. It integrates **10 SOTA algorithms**. Space selects reliable algorithms by measuring their consistency. Then, it constructs a consensus matrix to integrate the outputs from multiple algorithms. We introduce **similarity loss**, **spatial loss**, and **low-rank loss** in Space to enhance accuracy and optimize computational efficiency.
 
 <center>
     <img style="border-radius: 0.3125em;
@@ -127,7 +127,7 @@ First, load the necessary packages and set R environment.
 
 *<font color=red>Please note that in the code below, the R environment must be the one installed within Space. Users need to replace it according to the installation directory of Space.</font>*
 
-```Python
+```python
 import os
 import scanpy as sc
 import pandas as pd
