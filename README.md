@@ -32,7 +32,7 @@ The integrated methods:
 
 The **organization** of this repository file is as follows:
 
-```Shell
+```shell
 Space/  
 ├── Data/                    # data for reproducibility
 ├── Demo/  
@@ -50,7 +50,7 @@ The deployment of Space requires a Linux/Unix machine. We recommend using [conda
 
 We provide the environment file, allowing users to quickly deploy Space using the following command.
 
-```Shell
+```shell
 # clone or download this repository
 git clone https://github.com/Honchkrow/Space
 
@@ -67,7 +67,7 @@ conda env create -n Space -f environment.yml
 
 Once the environment is created, the users can enter the environment using the following command.
 
-```Shell
+```shell
 conda activate Space
 ```
 
@@ -144,7 +144,7 @@ os.environ["R_HOME"] = "/home/zw/software/miniforge-pypy3/envs/space/lib/R"
 
 Next, load the dataset.
 
-```Python
+```python
 # read the expression data
 adata = sc.read_visium(
     path="./Data/V1_Breast_Cancer_Block_A_Section_1", 
@@ -175,7 +175,7 @@ gt = adata.obs["gt"]
 
 Then, set the parameters.
 
-```Python
+```python
 k = 20  # number of clusters
 epochs = 120
 seed = 666
@@ -185,7 +185,7 @@ learning_rate = 0.0001
 
 Now, read the results from 10 SOTA methods.
 
-```Python
+```python
 mul_reults = pd.read_csv(
     "./Data/V1_Breast_Cancer_Block_A_Section_1/result.csv", 
     header=0, 
