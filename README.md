@@ -253,7 +253,7 @@ print(ari)
 
 you will obtain a result from Space with an ARI of 0.648.
 
-**<font color=red>In most cases, Space does not yield a fixed result. This is not due to an issue with Space, but because some methods exhibit randomness even when the random seed is fixed. Please refer to [this](https://github.com/QIFEIDKN/STAGATE/issues/10) for more information. However, the variations in the results we obtain are minimal. The outcomes are stable across multiple runs.</font>**
+**<font color=red>In most cases, Space does not yield a fixed result. This is not due to an issue with Space, but because some methods exhibit randomness even when the random seed is fixed. Please refer to 'https://github.com/QIFEIDKN/STAGATE/issues/10' for more information. However, the variations in the results we obtain are minimal. The outcomes are stable across multiple runs.</font>**
 
 
 #### Visualization
