@@ -84,4 +84,115 @@ In the manuscript for Space, we present the results of Space on four different d
 - [Mouse primary visual area](https://spacetx.github.io/data.html): This dataset comprises three slices, containing 3390, 4491, and 3545 spots, respectively, for a total of 79 genes. Manual annotation was performed on six visual cortex layers, ranging from VISP_I to VISP_VI, as well as the white matter region (VISpwm).
 - [Mouse visual cortex](https://www.starmapresources.com/data): This dataset includes three tissue sections_BZ5, BZ9, and BZ14_which have spot counts of 1049, 1053, and 1088, respectively, amounting to a total of 166 genes. Manual annotation was conducted for four regions.
 
-To facilitate user access, we have uploaded these four datasets to **[Google Drive](https://drive.google.com/drive/folders/1rXn5_HYpFo514hQXepZnaNJAD5xq9o4Z?usp=drive_link)**. Users can directly download and use them.
+We have prepared two types of data. The first type consists of results on four datasets, obtained using ten SOTA algorithms. This data is in CSV format, which allows users to quickly reproduce the results of the Space article. **This data is already integrated into this repository, so users do not need to download it separately.** The second type is the processed SRT data, which includes gene expression matrices, spatial location information, and H&E images. Due to the large size of this data, it cannot be uploaded to GitHub. Therefore, users will need to download it.
+
+#### Download the Processed SRT Datasets (not mandatory)
+
+To facilitate user access, we have uploaded the processed SRT datasets to **[Google Drive](https://drive.google.com/drive/folders/1rXn5_HYpFo514hQXepZnaNJAD5xq9o4Z?usp=drive_link)** and **[BaiduYun](https://pan.baidu.com/s/1qxoq0ttp0BzsvLzBtDUgIg?pwd=3vvv)**. Users can directly download and use them.
+
+To facilitate users in quickly reproducing our results, they can merge the extracted 'Data' folder with the 'Data' folder in the Space project. This can be done immediately after downloading and unzipping the files.The **organization** of this project will become:
+
+```Shell
+# Only shows the BARISTASeq dataset.
+# Mouse_hippocampus_MERFISH, SRARmap_pa and V1_Breast_Cancer_Block_A_Section_1 are the same.
+Space/  
+├── Data/
+│   ├── BARISTASeq/
+│   │   ├── BARISTASeq_Sun2021Integrating_Slice_1_data.h5ad
+│   │   ├── BARISTASeq_Sun2021Integrating_Slice_2_data.h5ad
+│   │   ├── BARISTASeq_Sun2021Integrating_Slice_3_data.h5ad
+│   │   ├── result1.csv
+│   │   ├── result2.csv
+│   │   └── result3.csv
+│   ├── Mouse_hippocampus_MERFISH/  # not show
+│   ├── SRARmap_pa/  # not show
+│   └── V1_Breast_Cancer_Block_A_Section_1/  # not show
+├── Demo/  
+│   ├── Reference_Methods/
+│   └── Reproduce_Scripts/
+├── Images/
+├── Space/
+└── environment.yml
+```
+
+
+### 3.2 Reproducing the Results of Space
+
+To reproduce the results of the Space article, users can run the scripts in the **Demo** folder. The scripts are organized into two folders: **Reference_Methods** and **Reproduce_Scripts**. The **Reference_Methods** folder contains scripts for reproducing the results of the ten SOTA algorithms. The **Reproduce_Scripts** folder contains scripts for reproducing the results of the Space.
+
+Here, for quick illustration, we directly apply Space to the results obtained from 10 SOTA methods. These methods have already been executed. The scripts are asved in **Reference_Methods** folder. The results of these methods are saved in the **Data** folder.
+
+
+First, load the necessary packages and set R environment. 
+
+*<font color=red>Please note that in the code below, the R environment must be the one installed within Space. Users need to replace it according to the installation directory of Space.</font>*
+
+```Python
+import os
+import scanpy as sc
+import pandas as pd
+import Space
+from sklearn.metrics import adjusted_rand_score
+from sklearn.cluster import SpectralClustering
+from Space.cons_func import get_results, get_domains
+from Space.utils import calculate_location_adj, plot_results_ari, get_bool_martix
+
+# The mclust is used.
+# Please modify this path!
+os.environ["R_HOME"] = "/home/zw/software/miniforge-pypy3/envs/space/lib/R"
+```
+
+Next, load the dataset.
+
+```Python
+# read the expression data
+adata = sc.read_visium(
+    path="./Data/V1_Breast_Cancer_Block_A_Section_1", 
+    count_file="filtered_feature_bc_matrix.h5"
+)
+
+# read the metadata
+Ann_df = pd.read_csv(
+    "./Data/V1_Breast_Cancer_Block_A_Section_1/metadata.tsv",
+    sep="\t",
+    header=0,
+    na_filter=False,
+    index_col=0,
+)
+adata.var_names_make_unique()
+
+# read the image representation
+im_re = pd.read_csv(
+    "./Data/V1_Breast_Cancer_Block_A_Section_1/image_representation/ViT_pca_representation.csv",
+    header=0,
+    index_col=0,
+    sep=",",
+)
+adata.obsm["im_re"] = im_re
+adata.obs["gt"] = Ann_df["fine_annot_type"]
+gt = adata.obs["gt"]
+```
+
+Then, set the parameters.
+
+```Python
+k = 20  # number of clusters
+epochs = 120
+seed = 666
+alpha = 1  # recommended value
+learning_rate = 0.0001
+```
+
+Now, read the results from 10 SOTA methods.
+
+```Python
+mul_reults = pd.read_csv(
+    "./Data/V1_Breast_Cancer_Block_A_Section_1/result.csv", 
+    header=0, 
+    index_col=0
+)
+mul_reults = mul_reults.iloc[:, 2:]
+```
+
+
+
