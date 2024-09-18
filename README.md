@@ -86,7 +86,7 @@ In the manuscript for Space, we present the results of Space on four different d
 
 We have prepared two types of data. The first type consists of results on four datasets, obtained using ten SOTA algorithms. This data is in CSV format, which allows users to quickly reproduce the results of the Space article. **This data is already integrated into this repository, so users do not need to download it separately.** The second type is the processed SRT data, which includes gene expression matrices, spatial location information, and H&E images. Due to the large size of this data, it cannot be uploaded to GitHub. Therefore, users will need to download it.
 
-#### Download the Processed SRT Datasets (not mandatory)
+#### Download the processed SRT datasets (not mandatory)
 
 To facilitate user access, we have uploaded the processed SRT datasets to **[Google Drive](https://drive.google.com/drive/folders/1rXn5_HYpFo514hQXepZnaNJAD5xq9o4Z?usp=drive_link)** and **[BaiduYun](https://pan.baidu.com/s/1qxoq0ttp0BzsvLzBtDUgIg?pwd=3vvv)**. Users can directly download and use them.
 
@@ -116,12 +116,13 @@ Space/
 ```
 
 
-### 3.2 Reproducing the Results of Space
+### 3.2 Reproducing the results of Space (simple tutorial)
 
 To reproduce the results of the Space article, users can run the scripts in the **Demo** folder. The scripts are organized into two folders: **Reference_Methods** and **Reproduce_Scripts**. The **Reference_Methods** folder contains scripts for reproducing the results of the ten SOTA algorithms. The **Reproduce_Scripts** folder contains scripts for reproducing the results of the Space.
 
-Here, for quick illustration, we directly apply Space to the results obtained from 10 SOTA methods. These methods have already been executed. The scripts are asved in **Reference_Methods** folder. The results of these methods are saved in the **Data** folder.
+#### How to integrate the results of different algorithms using Space
 
+Here, for quick illustration, we directly apply Space to the results obtained from 10 SOTA methods. These methods have already been executed. The scripts are asved in **Reference_Methods** folder. The results of these methods are saved in the **Data** folder.
 
 First, load the necessary packages and set R environment. 
 
@@ -194,5 +195,19 @@ mul_reults = pd.read_csv(
 mul_reults = mul_reults.iloc[:, 2:]
 ```
 
+#### Visualization
 
 
+#### Domain-specific gene analysis
+
+
+#### Trajectory inference
+
+
+#### Use with Scanpy or Seurat
+
+
+### 3.3 How to choose and use different baseline algorithms
+
+
+## 4 Citation
