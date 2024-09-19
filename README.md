@@ -58,7 +58,8 @@ git clone https://github.com/Honchkrow/Space
 cd Space
 
 # install environment using environment.yml
-conda env create -n Space -f environment.yml
+conda env create -n Space -f environment.yml  # by conda
+mamba env create -n Space -f environment.yml  # by mamba
 ```
 
 *<font color=red>Note:</font> The environment name can be changed by replacing "-n Space" to "-n environment_name".*
@@ -120,9 +121,11 @@ Space/
 
 To reproduce the results of the Space article, users can run the scripts in the **Demo** folder. The scripts are organized into two folders: **Reference_Methods** and **Reproduce_Scripts**. The **Reference_Methods** folder contains scripts for reproducing the results of the ten SOTA algorithms. The **Reproduce_Scripts** folder contains scripts for reproducing the results of the Space.
 
-#### How to integrate the results of different algorithms using Space
+#### 3.2.1 Key functions of the Space
 
-Here, for quick illustration, we directly apply Space to the results obtained from 10 SOTA methods. These methods have already been executed. The scripts are asved in **Reference_Methods** folder. The results of these methods are saved in the **Data** folder.
+#### 3.2.2 How to integrate the results of different algorithms using Space
+
+Here, for quick illustration, we directly apply Space to the results obtained from 10 SOTA methods. These methods have already been executed. The scripts are saved in **Reference_Methods** folder. The results of these methods are saved in the **Data** folder.
 
 First, load the necessary packages and set R environment. 
 
@@ -138,7 +141,7 @@ from sklearn.cluster import SpectralClustering
 from Space.cons_func import get_results, get_domains
 from Space.utils import calculate_location_adj, plot_results_ari, get_bool_martix
 
-# The mclust is used.
+# Some methods need mclust.
 # Please modify this path!
 os.environ["R_HOME"] = "/home/zw/software/miniforge-pypy3/envs/space/lib/R"
 ```
@@ -169,6 +172,8 @@ im_re = pd.read_csv(
     index_col=0,
     sep=",",
 )
+
+# set variables
 adata.obsm["im_re"] = im_re
 adata.obs["gt"] = Ann_df["fine_annot_type"]
 gt = adata.obs["gt"]
@@ -184,7 +189,7 @@ alpha = 1                # recommended value
 learning_rate = 0.0001   # learning rate in training
 ```
 
-Now, read the results from 10 SOTA methods.
+Now, read the results from 10 SOTA methods. To quickly reproduce the results, we directly read the outcomes from 10 SOTA methods. The code for these methods can be found in the "**/Demo/Reference_Methods/breast**" folder.
 
 ```python
 mul_reults = pd.read_csv(
@@ -193,7 +198,6 @@ mul_reults = pd.read_csv(
     index_col=0
 )
 mul_reults = mul_reults.iloc[:, 2:]
-
 ```
 
 
@@ -251,21 +255,22 @@ ari = adjusted_rand_score(labels, gt.values)
 print(ari)
 ```
 
-you will obtain a result from Space with an ARI of 0.648.
+you will obtain a result from Space with an ARI of **0.648**.
 
 **<font color=red>In most cases, Space does not yield a fixed result. This is not due to an issue with Space, but because some methods exhibit randomness even when the random seed is fixed. Please refer to 'https://github.com/QIFEIDKN/STAGATE/issues/10' for more information. However, the variations in the results we obtain are minimal. The outcomes are stable across multiple runs.</font>**
 
 
-#### Visualization
+
+#### 3.2.3 Visualization
 
 
-#### Domain-specific gene analysis
+#### 3.2.4 Domain-specific gene analysis
 
 
-#### Trajectory inference
+#### 3.2.5 Trajectory inference
 
 
-#### Use with Scanpy or Seurat
+#### 3.2.6 Use with Scanpy or Seurat
 
 
 ### 3.3 How to choose and use different baseline algorithms
