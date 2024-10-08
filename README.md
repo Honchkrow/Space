@@ -76,7 +76,7 @@ conda activate Space
 
 In this section, we will use a SRT dataset to provide a detailed introduction to the functionalities of Space.
 
-### 3.1 Datasets
+### 3.1 Preparing the Datasets
 
 In the manuscript for Space, we present the results of Space on four different datasets. These datasets are:
 
@@ -117,13 +117,13 @@ Space/
 ```
 
 
-### 3.2 Reproducing the results of Space (simple tutorial)
+### 3.2 Performing Concensus Clsutering using Space (Reproducibility)
 
-To reproduce the results of the Space article, users can run the scripts in the **Demo** folder. The scripts are organized into two folders: **Reference_Methods** and **Reproduce_Scripts**. The **Reference_Methods** folder contains scripts for reproducing the results of the ten SOTA algorithms. The **Reproduce_Scripts** folder contains scripts for reproducing the results of the Space.
+In this section, we will show how to perform the Clsutering using Space.
 
-#### 3.2.1 Key functions of the Space
+Also, to reproduce the results of our article, users can run the scripts in the **Demo** folder. The scripts are organized into two folders: **Reference_Methods** and **Reproduce_Scripts**. The **Reference_Methods** folder contains scripts for reproducing the results of the 10 SOTA algorithms. The **Reproduce_Scripts** folder contains scripts for reproducing the results of the Space.
 
-#### 3.2.2 How to integrate the results of different algorithms using Space
+#### 3.2.1 Step-by-step Tutorial for Procesing Breast Cancer Dataset
 
 Here, for quick illustration, we directly apply Space to the results obtained from 10 SOTA methods. These methods have already been executed. The scripts are saved in **Reference_Methods** folder. The results of these methods are saved in the **Data** folder.
 
@@ -200,11 +200,11 @@ mul_reults = pd.read_csv(
 mul_reults = mul_reults.iloc[:, 2:]
 ```
 
-
-Now, we can observe the consistency between the results of different methods.
+Next, we can observe the consistency between the results of different methods and discard the inconsistent methods.
 
 ```python
-plot_results_ari(mul_reults)
+# drop 2 methods that show poor consistency
+mul_reults = plot_ari_with_removal(mul_reults, 2)
 ```
 
 <center>
@@ -220,13 +220,10 @@ plot_results_ari(mul_reults)
 
 
 ```python
-# Discard methods that show poor consistency
-mul_reults = mul_reults.drop("SpaceFlow", axis=1)
-mul_reults = mul_reults.drop("MENDER", axis=1)
-
 # compute the positional similarity matrix
 pos_similarity = calculate_location_adj(adata.obsm["spatial"], l=123)
 
+# create the model
 model = Space.Space(
     get_bool_martix(mul_reults),
     pos_similarity,
@@ -257,23 +254,85 @@ print(ari)
 
 you will obtain a result from Space with an ARI of **0.648**.
 
-**<font color=red>In most cases, Space does not yield a fixed result. This is not due to an issue with Space, but because some methods exhibit randomness even when the random seed is fixed. Please refer to 'https://github.com/QIFEIDKN/STAGATE/issues/10' for more information. However, the variations in the results we obtain are minimal. The outcomes are stable across multiple runs.</font>**
+**<font color=red>In some cases, Space does not yield a fixed result. This is not due to an issue with Space, but because some methods exhibit randomness even when the random seed is fixed. Please refer to 'https://github.com/QIFEIDKN/STAGATE/issues/10' for more information. However, the variations in the results we obtain are minimal. The outcomes are stable across multiple runs.</font>**
+
+Next, we can vislize the clustering results.
+
+```python
+# assign label to adata
+adata.obs["Space"] = labels
+adata.obs["Space"] = adata.obs["Space"].astype('str')
+
+# plotting the results
+sc.pl.spatial(adata, color="Space", title='Space (ARI=%.2f)'%ari)
+```
+
+<center>
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="./Images/Breast_cancer.png">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">Consistency between different methods</div>
+</center>
+
+ Using SCANPY, we can also analysis the domian-specific genes.
+
+```python
+sc.tl.rank_genes_groups(adata, 'Space', groups=["2"], reference="0", method='wilcoxon')
+sc.pl.rank_genes_groups(adata, groups=['2'], n_genes=20)
+```
+
+<center>
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="./Images/gene1.png">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">Consistency between different methods</div>
+</center>
+
+```python
+sc.pl.rank_genes_groups_violin(adata, groups='2', n_genes=8)
+ ```
+
+We can compare the genes from different domain.
+
+<center>
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="./Images/gene2.png">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">Consistency between different methods</div>
+</center>
 
 
+We can also visual the distribution of genes for all domains.
 
-#### 3.2.3 Visualization
+```python
+sc.pl.violin(adata, ['PBX1', 'KRT18', 'COX6C'], groupby='Space')
+```
 
+<center>
+    <img style="border-radius: 0.3125em;
+    box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+    src="./Images/gene3.png">
+    <br>
+    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
+    display: inline-block;
+    color: #999;
+    padding: 2px;">Consistency between different methods</div>
+</center>
 
-#### 3.2.4 Domain-specific gene analysis
+### 3.3 How to selecte different methods by hand
 
-
-#### 3.2.5 Trajectory inference
-
-
-#### 3.2.6 Use with Scanpy or Seurat
-
-
-### 3.3 How to choose and use different baseline algorithms
 
 
 ## 4 Citation
