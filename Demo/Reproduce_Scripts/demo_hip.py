@@ -4,7 +4,7 @@ import pandas as pd
 
 os.environ["R_HOME"] = "/home/zw/software/miniforge-pypy3/envs/space/lib/R"
 import Space
-
+slide_id = "19"
 from Space.cons_func import (
     run_GraphST,
     run_Leiden,
@@ -20,10 +20,7 @@ from Space.cons_func import (
 from sklearn.metrics import adjusted_rand_score
 from sklearn.cluster import SpectralClustering
 from Space.cons_func import get_results, get_domains
-from Space.utils import calculate_location_adj, plot_results_ari, get_bool_martix
-
-# change slice
-slide_id = "19"
+from Space.utils import calculate_location_adj, plot_results_ari, get_bool_martix,plot_ari_with_removal
 
 adata = sc.read(f"./Data/Mouse_hippocampus_MERFISH/hip_adata-0.{slide_id}.h5ad")
 adata.var_names_make_unique()
@@ -74,6 +71,9 @@ mul_reults = mul_reults.drop("Leiden", axis=1)
 mul_reults = mul_reults.drop("MENDER", axis=1)
 mul_reults = mul_reults.drop("SpaGCN", axis=1)
 mul_reults = mul_reults.drop("stLearn", axis=1)
+
+
+# mul_reults = plot_ari_with_removal(mul_reults,8)
 pos_similarity = calculate_location_adj(adata.obsm["spatial"], l=123)
 
 model = Space.Space(
@@ -93,3 +93,5 @@ labels = sc.fit_predict(con_martix)
 adata.obs["consensus"] = labels
 ari = adjusted_rand_score(labels, adata.obs["ground_truth"].values)
 print(ari)
+
+

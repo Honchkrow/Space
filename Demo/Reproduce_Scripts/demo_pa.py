@@ -19,10 +19,11 @@ from Space.cons_func import (
 from sklearn.metrics import adjusted_rand_score
 from sklearn.cluster import SpectralClustering
 from Space.cons_func import get_results, get_domains
-from Space.utils import calculate_location_adj, plot_results_ari, get_bool_martix
+from Space.utils import calculate_location_adj, plot_results_ari, get_bool_martix,plot_ari_with_removal
 
 
-slide_id = "5"
+slide_id = "14"
+# slide_id = "5"
 adata = sc.read("./Data/SRARmap_pa/MS_raw_Dataset11_Dataset11_data.h5ad")
 adata = adata[adata.obs["slice_id"] == f"BZ{slide_id}", :]
 adata.var_names_make_unique()
@@ -63,12 +64,18 @@ mul_reults = mul_reults.iloc[:, 2:]
 """collected_results = get_results(func_dict, use_multithreading=True, monitor_performance=True)
 mul_reults = get_domains(adata,collected_results,gt)
 mul_reults = mul_reults.drop('ground_truth', axis=1)"""
-plot_results_ari(mul_reults)
+# plot_results_ari(mul_reults)
+# mul_reults = mul_reults.drop('Leiden', axis=1)
+# mul_reults = mul_reults.drop('SpaGCN', axis=1)
+# mul_reults = mul_reults.drop('stLearn', axis=1)
+# mul_reults = mul_reults.drop('SCANPY', axis=1)
+
+
+mul_reults = plot_ari_with_removal(mul_reults,4)
+
+
 pos_similarity = calculate_location_adj(adata.obsm["spatial"], l=123)
-mul_reults = mul_reults.drop('Leiden', axis=1)
-mul_reults = mul_reults.drop('SpaGCN', axis=1)
-mul_reults = mul_reults.drop('stLearn', axis=1)
-mul_reults = mul_reults.drop('SCANPY', axis=1)
+
 model = Space.Space(
     get_bool_martix(mul_reults),
     pos_similarity,
@@ -80,6 +87,7 @@ model = Space.Space(
     beta=1,
     learning_rate=learning_rate,
 )
+
 con_martix = model.train()
 sc = SpectralClustering(n_clusters=k, affinity="precomputed", random_state=666)
 labels = sc.fit_predict(con_martix)

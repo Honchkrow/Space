@@ -19,7 +19,7 @@ from Space.cons_func import (
 from sklearn.metrics import adjusted_rand_score
 from sklearn.cluster import SpectralClustering
 from Space.cons_func import get_results, get_domains
-from Space.utils import calculate_location_adj, plot_results_ari, get_bool_martix
+from Space.utils import calculate_location_adj, plot_results_ari, get_bool_martix,plot_ari_with_removal
 
 adata = sc.read_visium(
     path="./Data/V1_Breast_Cancer_Block_A_Section_1", count_file="filtered_feature_bc_matrix.h5"
@@ -80,9 +80,11 @@ mul_reults = get_domains(adata,collected_results,gt)
 mul_reults = mul_reults.drop('ground_truth', axis=1)"""
 
 
-plot_results_ari(mul_reults)
-mul_reults = mul_reults.drop("SpaceFlow", axis=1)
-mul_reults = mul_reults.drop("MENDER", axis=1)
+mul_reults = plot_ari_with_removal(mul_reults, 2)
+
+# plot_results_ari(mul_reults)
+# mul_reults = mul_reults.drop("SpaceFlow", axis=1)
+# mul_reults = mul_reults.drop("MENDER", axis=1)
 
 pos_similarity = calculate_location_adj(adata.obsm["spatial"], l=123)
 
@@ -98,8 +100,18 @@ model = Space.Space(
     learning_rate=learning_rate,
 )
 con_martix = model.train()
-sc = SpectralClustering(n_clusters=k, affinity="precomputed", random_state=666)
-labels = sc.fit_predict(con_martix)
-adata.obs["consensus"] = labels
+sClustering = SpectralClustering(n_clusters=k, affinity="precomputed", random_state=666)
+labels = sClustering.fit_predict(con_martix)
+adata.obs["Space"] = labels
+adata.obs["Space"] = adata.obs["Space"].astype('str')
 ari = adjusted_rand_score(labels, gt.values)
 print(ari)
+
+sc.pl.spatial(adata, color="Space", title='Space (ARI=%.2f)'%ari)
+
+sc.tl.rank_genes_groups(adata, 'Space', groups=["2"], reference="0", method='wilcoxon')
+sc.pl.rank_genes_groups(adata, groups=['2'], n_genes=20)
+
+sc.pl.rank_genes_groups_violin(adata, groups='2', n_genes=8)
+
+sc.pl.violin(adata, ['PBX1', 'KRT18', 'COX6C'], groupby='Space')

@@ -19,14 +19,14 @@ from Space.cons_func import (
 from sklearn.metrics import adjusted_rand_score
 from sklearn.cluster import SpectralClustering
 from Space.cons_func import get_results, get_domains
-from Space.utils import calculate_location_adj, plot_results_ari, get_bool_martix
-slide_id = "2"
+from Space.utils import calculate_location_adj, plot_results_ari, get_bool_martix,plot_ari_with_removal
+slide_id = "3"
 adata = sc.read(f"./Data/BARISTASeq/BARISTASeq_Sun2021Integrating_Slice_{slide_id}_data.h5ad")
 adata.var_names_make_unique()
 
 gt = adata.obs["layer"]
 k = 6
-epochs = 300
+epochs = 200
 seed = 666
 alpha = 1
 learning_rate = 0.001
@@ -53,15 +53,21 @@ func_dict = {
 # mul_reults = mul_reults.iloc[:, 2:].dropna()
 
 
-collected_results = get_results(func_dict, use_multithreading=False, monitor_performance=True)
-mul_reults = get_domains(adata,collected_results,gt)
-mul_reults= mul_reults.loc[mul_reults["ground_truth"] != 'outside_VISp']
+# collected_results = get_results(func_dict, use_multithreading=False, monitor_performance=True)
+# mul_reults = get_domains(adata,collected_results,gt)
+# mul_reults= mul_reults.loc[mul_reults["ground_truth"] != 'outside_VISp']
+# mul_reults = mul_reults.dropna()
+# mul_reults = mul_reults.drop('ground_truth', axis=1)
+
+mul_reults = pd.read_csv(f"./Data/BARISTASeq/result{slide_id}.csv", header=0, index_col=0)
+mul_reults= mul_reults.loc[mul_reults["Ground Truth"] != 'outside_VISp']
 mul_reults = mul_reults.dropna()
-mul_reults = mul_reults.drop('ground_truth', axis=1)
+mul_reults = mul_reults.iloc[:, 2:]
+
+mul_reults = plot_ari_with_removal(mul_reults,4)
 
 
-
-plot_results_ari(mul_reults)
+# plot_results_ari(mul_reults)
 outside_VISp_indices = adata.obs["layer"] == "outside_VISp"
 adata = adata[~outside_VISp_indices]
 gt = adata.obs["layer"]
