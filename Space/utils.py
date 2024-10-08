@@ -49,12 +49,49 @@ def plot_results_ari(mul_reults):
                 ari = adjusted_rand_score(mul_reults[methods[i]], mul_reults[methods[j]])
                 ari_matrix.iloc[i, j] = ari
                 ari_matrix.iloc[j, i] = ari
-
     plt.figure(figsize=(10, 8))
     sns.heatmap(ari_matrix, annot=True, cmap='coolwarm', square=True)
     plt.title('ARI')
     plt.show()
     print(ari_matrix.mean())
+
+
+def plot_ari_with_removal(mul_reults, remove_lowest_mean=0):
+    methods = mul_reults.columns
+    ari_matrix = pd.DataFrame(np.zeros((len(methods), len(methods))), index=methods, columns=methods)
+
+    # 计算 ARI 矩阵
+    for i in range(len(methods)):
+        for j in range(len(methods)):
+            if i == j:
+                # 同一方法的ARI自然为1
+                ari_matrix.iloc[i, j] = 1
+            elif i < j:
+                # 计算不同方法的ARI
+                ari = adjusted_rand_score(mul_reults[methods[i]], mul_reults[methods[j]])
+                ari_matrix.iloc[i, j] = ari
+                ari_matrix.iloc[j, i] = ari
+
+    # 绘制热图
+    plt.figure(figsize=(10, 8))
+    sns.heatmap(ari_matrix, annot=True, cmap='coolwarm', square=True)
+    plt.title('ARI')
+    plt.show()
+    # 输出 ARI 均值
+    print(ari_matrix.mean())
+
+    # 如果 remove_lowest_mean > 0，则删除ARI均值最小的行和列
+    if remove_lowest_mean > 0:
+        mean_ari = ari_matrix.mean()
+        # 找到 mean 值最小的前 remove_lowest_mean 个方法
+        min_mean_methods = mean_ari.nsmallest(remove_lowest_mean).index.tolist()
+        print(f"Removing methods with lowest ARI means: {min_mean_methods}")
+        # 从 mul_reults 和 ari_matrix 中删除对应的行和列
+        mul_reults = mul_reults.drop(columns=min_mean_methods)
+        # ari_matrix = ari_matrix.drop(index=min_mean_methods, columns=min_mean_methods)
+    return mul_reults
+
+
 
 def get_bool_martix(mul_reults):
     m = len(mul_reults)
