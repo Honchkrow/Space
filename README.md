@@ -93,7 +93,7 @@ To facilitate user access, we have uploaded the processed SRT datasets to **[Goo
 
 To facilitate users in quickly reproducing our results, they can merge the extracted 'Data' folder with the 'Data' folder in the Space project. This can be done immediately after downloading and unzipping the files.The **organization** of this project will become:
 
-```Shell
+```shell
 # Only shows the BARISTASeq dataset.
 # Mouse_hippocampus_MERFISH, SRARmap_pa and V1_Breast_Cancer_Block_A_Section_1 are the same.
 Space/  
