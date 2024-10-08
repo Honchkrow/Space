@@ -314,7 +314,7 @@ We can compare the genes from different domain.
 </center>
 
 
-We can also visual the distribution of genes for all domains.
+We can also visual the distribution of genes across all domains.
 
 ```python
 sc.pl.violin(adata, ['PBX1', 'KRT18', 'COX6C'], groupby='Space')
