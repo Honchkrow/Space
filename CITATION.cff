@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: Daoliang
+    given-names: Zhang
+title: "Space: Reconciling Multiple Spatial Domain Identification Algorithms via Consensus Clustering"
+version: 0.0.1
+identifiers:
+  - type: GitHub
+    value: https://honchkrow.github.io/Space/
+date-released: 2024-10-03
