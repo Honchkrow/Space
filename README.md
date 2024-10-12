@@ -331,7 +331,67 @@ sc.pl.violin(adata, ['PBX1', 'KRT18', 'COX6C'], groupby='Space')
     padding: 2px;">Consistency between different methods</div>
 </center>
 
-### 3.3 How to selecte different methods by hand
+### 3.3 Performing domain identification in a pipeline manner
+
+For user convenience, we also provide a pipeline code that allows for the one-time execution of all methods. Here, we mainly introduce the interface in Space.
+
+In "Space.cons_func," we offer interfaces for 10 baseline methods. Users only need to configure the parameters according to the requirements of each method and then pass them to the corresponding module.
+
+The key code is as follows.
+
+```python
+# import the modules for each method
+from Space.cons_func import get_results
+from Space.cons_func import (
+    run_GraphST,
+    run_Leiden,
+    run_MENDER,
+    run_SCANPY,
+    run_SEDR,
+    run_SpaceFlow,
+    run_SpaGCN,
+    run_STAGATE,
+    run_stGCL,
+    run_stLearn,
+)
+
+# Define the parameters for each method
+# 'adata' and 'k' is the same as demo in section 3.2
+func_dict = {
+    run_GraphST: {"input_adata": adata, "n_cluster": k, "radius": 50, "random_seed": 200},
+    run_Leiden: {"input_adata": adata, "random_state": 0},
+    run_MENDER: {"input_adata": adata, "n_cluster": k, "scale": 2, "radius": 6, "random_seed": 1},
+    run_SCANPY: {"input_adata": adata, "resolution": 0.5, "random_state": 0},
+    run_SEDR: {"input_adata": adata, "n_cluster": k, "random_seed": 0},
+    run_SpaceFlow: {"input_adata": adata, "resolution": 1.5, "n_neighbors": 50, "random_seed": 8},
+    run_STAGATE: {"input_adata": adata, "n_cluster": k, "random_seed": 6},
+    run_stGCL: {
+        "input_adata": adata,
+        "n_cluster": k,
+        "radius": 70,
+        "epoch": 100,
+        "use_image": True,
+        "seed": 0,
+    },
+    run_stLearn: {
+        "input_adata": adata,
+        "n_cluster": k,
+    },
+    run_SpaGCN: {"input_adata": adata, "max_epochs": 20, "seed": 4},
+}
+
+# get the result from each method
+collected_results = get_results(func_dict, use_multithreading=False, monitor_performance=True)
+```
+
+Here, wo provide a simple demo using breast cancer dataset [here](https://github.com/Honchkrow/Space/blob/main/Demo/Reproduce_Scripts/demo_pipeline.py).Users  need to set up the data according to Section 3.1. After that, they can directly run the code provided below.
+
+```shell
+python demo_pipeline.py
+```
+
+
+### 3.4 How to selecte different methods by hand
 
 Sometimes, particularly when it involves known prior knowledge (such as morphological knowledge), users may wish to manually filter the results of de-identification. Space retains an interface for manual screening. Here, we provide a specific code example using the MERFISH dataset to demonstrate how to perform manual filtering.
 
@@ -433,4 +493,4 @@ The final ARI is **0.674**.
 
 ## 4 Citation
 
-Coming soon...
+Please see citation widget on the sidebar.
