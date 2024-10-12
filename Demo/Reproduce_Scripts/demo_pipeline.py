@@ -53,6 +53,7 @@ alpha = 1
 learning_rate = 0.0001
 
 # Define a dictionary where the key is a subfunction and the value is a dictionary of parameters
+# users should change the parameters according to the data and requirements of each method
 func_dict = {
     run_GraphST: {"input_adata": adata, "n_cluster": k, "radius": 50, "random_seed": 200},
     run_Leiden: {"input_adata": adata, "random_state": 0},
