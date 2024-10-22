@@ -14,8 +14,7 @@ import concurrent.futures
 
 def run_GraphST(input_adata, n_cluster ,radius = 20,random_seed=0):
     print("run_GraphST")
-
-    from Space.GraphST import GraphST
+    from GraphST import GraphST
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     adata = input_adata.copy()
     model = GraphST.GraphST(adata, device=device, random_seed=random_seed)
@@ -25,14 +24,17 @@ def run_GraphST(input_adata, n_cluster ,radius = 20,random_seed=0):
 
     return adata.obs['domain'], adata.obsm['emb_pca']
 
-def run_Leiden(input_adata, resolution=0.5,n_top_genes=3000,random_state=0):
+def run_Leiden(input_adata, resolution=0.5,n_top_genes=3000,random_state=0,n_comps=30):
     print("run_Leiden")
     adata = input_adata.copy()
     sc.pp.highly_variable_genes(adata, flavor="seurat_v3", n_top_genes=n_top_genes)
-    sc.pp.pca(adata, n_comps=50)
-    sc.pp.neighbors(adata, use_rep='X_pca', n_neighbors=50)
-    sc.tl.leiden(adata, resolution=resolution, random_state=random_state)
-    sc.tl.umap(adata)
+    sc.pp.normalize_total(adata, target_sum=1e4)
+    sc.pp.log1p(adata)
+
+    sc.pp.pca(adata, n_comps=n_comps)
+    sc.pp.neighbors(adata, use_rep='X_pca')
+    sc.tl.leiden(adata, resolution=resolution)
+    # sc.tl.umap(adata)
 
     return adata.obs['leiden'], adata.obsm['X_pca']
 
@@ -51,20 +53,22 @@ def run_MENDER(input_adata, n_cluster, resolution=2,n_top_genes=4000,scale = 6,r
     msm.run_representation()
     msm.run_clustering_normal(n_cluster)
     mender_emb = msm.adata_MENDER.obsm["X_pca"]
-
     return msm.adata_MENDER.obs['MENDER'], mender_emb
 
-def run_SCANPY(input_adata, n_comps=30, resolution=1.5,random_state=1):
+def run_SCANPY(input_adata, n_comps=30, resolution=0.5,random_state=1):
     print("run_SCANPY")
     adata = input_adata.copy()
+    sc.pp.highly_variable_genes(adata, flavor="seurat_v3", n_top_genes=3000)
+    sc.pp.normalize_total(adata, target_sum=1e4)
+    sc.pp.log1p(adata)
+
     sc.pp.pca(adata, n_comps=n_comps)
     sc.pp.neighbors(adata, use_rep='X_pca')
-    sc.tl.louvain(adata, resolution=resolution, random_state=random_state)
-    sc.tl.umap(adata)
+    sc.tl.louvain(adata, resolution=resolution)
 
     return adata.obs['louvain'],adata.obsm['X_pca']
 
-def run_SEDR(input_adata, n_cluster, random_seed = 666,n_top_genes=2000):
+def run_SEDR(input_adata, n_cluster, random_seed = 0,n_top_genes=2000,n=12,n_components=200):
     print("run_SEDR")
     import Space.SEDR as SEDR
     random_seed = random_seed
@@ -77,9 +81,10 @@ def run_SEDR(input_adata, n_cluster, random_seed = 666,n_top_genes=2000):
     sc.pp.highly_variable_genes(adata, flavor="seurat_v3", n_top_genes=n_top_genes)
     adata = adata[:, adata.var['highly_variable'] == True]
     sc.pp.scale(adata)
-    adata_X = adata.X
+    from sklearn.decomposition import PCA  # sklearn PCA is used because PCA in scanpy is not stable.
+    adata_X = PCA(n_components=n_components, random_state=42).fit_transform(adata.X)
     adata.obsm['X_pca'] = adata_X
-    graph_dict = SEDR.graph_construction(adata, 8)
+    graph_dict = SEDR.graph_construction(adata, n)
     sedr_net = SEDR.Sedr(adata.obsm['X_pca'], graph_dict, mode='clustering', device=device)
     using_dec = True
     if using_dec:
@@ -110,18 +115,18 @@ def run_SpaceFlow(input_adata, n_top_genes=3000, resolution=0.5,epochs=1000,rand
 
     return adata.obs['SpaceFlow'], emb
 
-def run_STAGATE(input_adata, n_cluster ,rad_cutoff=400, n_top_genes=3000,random_seed=4):
+def run_STAGATE(input_adata, n_cluster ,rad_cutoff=400, n_top_genes=3000,random_seed=0,  alpha=0):
     print("run_STAGATE")
     import Space.STAGATE as STAGATE
 
     adata = input_adata.copy()
     sc.pp.highly_variable_genes(adata, flavor="seurat_v3", n_top_genes=n_top_genes)
     sc.pp.normalize_total(adata, target_sum=1e4)
+    sc.pp.log1p(adata)
+
     STAGATE.Cal_Spatial_Net(adata, rad_cutoff=rad_cutoff)
-    STAGATE.Stats_Spatial_Net(adata)
-    adata = STAGATE.train_STAGATE(adata,  alpha=0, random_seed=random_seed)#
-    sc.pp.neighbors(adata, use_rep='STAGATE')
-    sc.tl.umap(adata)
+    # STAGATE.Stats_Spatial_Net(adata)
+    adata = STAGATE.train_STAGATE(adata, alpha=alpha, random_seed=random_seed)#
     adata = STAGATE.mclust_R(adata, used_obsm='STAGATE', num_cluster=n_cluster)
 
     return adata.obs['mclust'], adata.obsm['STAGATE']
@@ -131,7 +136,6 @@ def run_stGCL(input_adata, n_cluster ,seed = 9,radius = 50, top_genes = 3000, ep
     import Space.stGCL as stGCL
     from Space.stGCL.process import prefilter_genes, prefilter_specialgenes, set_seed, refine_nearest_labels#
     from Space.stGCL import utils, train_model#
-
     use_image = use_image
     set_seed(seed)
     top_genes = top_genes
@@ -167,24 +171,34 @@ def run_stGCL(input_adata, n_cluster ,seed = 9,radius = 50, top_genes = 3000, ep
 
     return adata.obs['stGCL_refined'], adata.obsm['stGCL']
 
-def run_stLearn(input_adata, n_cluster,random_state=0):
+def run_stLearn(input_adata, n_cluster,TILE_PATH="./stlearn_tiles/",
+                n_comps=15,min_cells=1,
+                random_state=9,used_image= None):
     print("run_stLearn")
-    import Space.stLearn as st
-    st.settings.set_figure_params(dpi=180)
-    adata = input_adata.copy()
-    spatial = adata.obsm['spatial']
-    adata.obs["x_pixel"] = spatial[:, 0]
-    adata.obs["y_pixel"] = spatial[:, 1]
-    adata.var_names_make_unique()
-    st.pp.filter_genes(adata, min_cells=3)
-    st.pp.normalize_total(adata)
-    st.pp.log1p(adata)
-    st.pp.scale(adata)
-    st.em.run_pca(adata, n_comps=15)
-    st.pp.neighbors(adata, n_neighbors=25)
-    st.tl.clustering.kmeans(adata, n_clusters=n_cluster, use_data="X_pca", key_added="X_pca_kmeans", random_state=random_state)
+    import stlearn as st
+    data = input_adata.copy()
+    st.pp.filter_genes(data, min_cells=min_cells)
+    st.pp.normalize_total(data)
+    st.pp.log1p(data)
+    if used_image is not None:
+        st.em.run_pca(data, n_comps=n_comps)
+        library_id = list(data.uns["spatial"].keys())[0]
+        data.uns["spatial"][library_id]["use_quality"]=used_image
+        scale = data.uns["spatial"][library_id]["scalefactors"][
+            "tissue_" + used_image + "_scalef"]
+        image_coor = data.obsm["spatial"] * scale
+        data.obs["imagerow"] = image_coor[:, 0]
+        data.obs["imagecol"] = image_coor[:, 1]
+        st.pp.tiling(data, TILE_PATH)
+        st.pp.extract_feature(data)
+        st.spatial.SME.SME_normalize(data, use_data="raw", weights="physical_distance")
+        data.X = data.obsm['raw_SME_normalized']
 
-    return adata.obs['X_pca_kmeans'], adata.obsm['X_pca']
+    st.pp.scale(data)
+    st.em.run_pca(data, n_comps=n_comps)
+    st.tl.clustering.kmeans(data, n_clusters=n_cluster, use_data="X_pca", key_added="X_pca_kmeans", algorithm="auto",
+                            random_state=random_state)
+    return data.obs['X_pca_kmeans'], data.obsm['X_pca']
 
 def run_SpaGCN (input_adata, p=0.5,res=0.5,seed=666,max_epochs=200,s = 1,b = 49):
     print("run_SpaGCN")

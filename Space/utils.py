@@ -77,6 +77,7 @@ def plot_ari_with_removal(mul_reults, remove_lowest_mean=0):
     sns.heatmap(ari_matrix, annot=True, cmap='coolwarm', square=True)
     plt.title('ARI')
     plt.show()
+    print(ari_matrix)
     # 输出 ARI 均值
     print(ari_matrix.mean())
 

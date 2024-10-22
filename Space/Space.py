@@ -53,15 +53,6 @@ class Space():
             self.optimizer.zero_grad()
             loss.backward()
             self.optimizer.step()
-            if (epoch+1)%10==0:
-                m = self.matrixs.cpu().detach().numpy()
-
-                m = (m - np.min(m)) / (np.max(m) - np.min(m))
-
-                sc = SpectralClustering(n_clusters=self.k, affinity='precomputed',n_jobs=128,random_state=self.seed)
-                labels = sc.fit_predict(m)
-                ari = adjusted_rand_score(labels, self.gt)
-                print("ari:",ari)
         m = self.matrixs.cpu().detach().numpy()
         return (m - np.min(m)) / (np.max(m) - np.min(m))
 
