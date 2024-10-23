@@ -277,11 +277,13 @@ class SpaceFlow(object):
 
         z, _, _ = model(expr, edge_list)
         embedding = z.cpu().detach().numpy()
-        save_dir = os.path.dirname(embedding_save_filepath)
-        if not os.path.exists(save_dir):
-            os.makedirs(save_dir)
-        np.savetxt(embedding_save_filepath, embedding[:, :], delimiter="\t")
-        print(f"Training complete!\nEmbedding is saved at {embedding_save_filepath}")
+        
+        # disable saving function in SpaceFlow
+        # save_dir = os.path.dirname(embedding_save_filepath)
+        # if not os.path.exists(save_dir):
+        #     os.makedirs(save_dir)
+        # np.savetxt(embedding_save_filepath, embedding[:, :], delimiter="\t")
+        # print(f"Training complete!\nEmbedding is saved at {embedding_save_filepath}")
 
         self.embedding = embedding
         return embedding
@@ -306,11 +308,13 @@ class SpaceFlow(object):
             sc.tl.leiden(embedding_adata, resolution=float(resolution))
             domains = embedding_adata.obs["leiden"].cat.codes
 
-            save_dir = os.path.dirname(domain_label_save_filepath)
-            if not os.path.exists(save_dir):
-                os.makedirs(save_dir)
-            np.savetxt(domain_label_save_filepath, domains, fmt='%d', header='', footer='', comments='')
-            print(f"Segmentation complete, domain labels of cells or spots saved at {domain_label_save_filepath} !")
+            # disable saving function in SpaceFlow
+            # save_dir = os.path.dirname(domain_label_save_filepath)
+            # if not os.path.exists(save_dir):
+            #     os.makedirs(save_dir)
+            # np.savetxt(domain_label_save_filepath, domains, fmt='%d', header='', footer='', comments='')
+            # print(f"Segmentation complete, domain labels of cells or spots saved at {domain_label_save_filepath} !")
+            
             self.domains = domains
 
         except NameError:
