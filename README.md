@@ -40,6 +40,9 @@ Space/
 │   └── Reproduce_Scripts/   # the scripts for reproducing results in manuscript
 ├── Images/                  # images
 ├── Space/                   # Space source code
+├── CITATION.cff             # CItation file
+├── LICENSE                  # LICENSE file
+├── setup.sh                 # Installation file
 └── environment.yml          # conda/mamba environment file
 ```
 
@@ -57,20 +60,25 @@ git clone https://github.com/Honchkrow/Space
 # enter the folder
 cd Space
 
-# install environment using environment.yml
-conda env create -n Space -f environment.yml  # by conda
-mamba env create -n Space -f environment.yml  # by mamba
+chmod +x setup.sh
+
+# install environment using setup.sh based on conda or mamba
+# The script will check the configure settings automatically.
+bash setup.sh conda  # or "bash setup.sh mamba"
+
+# activate environment
+conda activate space  # or "mamba activate space"
+
+# install bokeh and stlearn
+pip install --no-deps bokeh==3.4.2 stlearn==0.4.12
 ```
 
-*<font color=red>Note:</font> The environment name can be changed by replacing "-n Space" to "-n environment_name".*
+*<font color=red>Note:</font> Please note that if there is already an environment named "space" in conda/mamba, it will lead to a failure due to name conflict. Be sure to resolve any naming issues with the environment in advance.*
+
+*<font color=red>Note:</font> If you encounter the error **<font color=blue>Too many open files: '/proc/cpuinfo'</font>**, it means that the number of open files has exceeded the limits set by the Linux system during the environment installation. You can resolve this issue by using the command "ulimit -n number". A non-root user can set this limit to a maximum of 4096 with "ulimit -n 4096". However, we recommend that the root user set the limit to "ulimit -n 65535".*
 
 *<font color=red>Note:</font> If errors about **<font color=blue>unavailable or invalid channel</font>** occur, please check that whether the **.condarc** file in your ~ directory had been modified. Modifing .condarc file may cause wrong channel error. In this case, just rename/backup your .condarc file. Once the installation finished, this file can be recoveried. Of course, you can delete .condarc file if necessary.*
 
-Once the environment is created, the users can enter the environment using the following command.
-
-```shell
-conda activate Space
-```
 
 ## 3. How to use Space
 
@@ -113,7 +121,7 @@ Space/
 │   └── Reproduce_Scripts/
 ├── Images/
 ├── Space/
-└── environment.yml
+└── Other Files
 ```
 
 
