@@ -196,7 +196,7 @@ def run_stLearn(input_adata, n_cluster,TILE_PATH="./stlearn_tiles/",
 
     st.pp.scale(data)
     st.em.run_pca(data, n_comps=n_comps)
-    st.tl.clustering.kmeans(data, n_clusters=n_cluster, use_data="X_pca", key_added="X_pca_kmeans", algorithm="auto",
+    st.tl.clustering.kmeans(data, n_clusters=n_cluster, use_data="X_pca", key_added="X_pca_kmeans", algorithm="lloyd",
                             random_state=random_state)
     return data.obs['X_pca_kmeans'], data.obsm['X_pca']
 
