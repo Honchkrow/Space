@@ -2,7 +2,7 @@
 
 Reconciling Multiple Spatial Domain Identification Algorithms via Consensus Clustering
 
-## 1. Introduction {section1}
+## 1. Introduction
 
 **Space** is a spatial domain identification method from <u>spa</u>tially resolved transcriptomics (SRT) data using <u>c</u>onsensus clust<u>e</u>ring. It integrates **10 SOTA algorithms**. Space selects reliable algorithms by measuring their consistency. Then, it constructs a consensus matrix to integrate the outputs from multiple algorithms. We introduce **similarity loss**, **spatial loss**, and **low-rank loss** in Space to enhance accuracy and optimize computational efficiency.
 
@@ -47,7 +47,7 @@ Space/
 ```
 
 
-## 2. Installation Tutorial {section2}
+## 2. Installation Tutorial
 
 The deployment of Space requires a Linux/Unix machine. We recommend using [conda](https://anaconda.org/anaconda/conda)/[mamba](https://github.com/conda-forge/miniforge) and create a virtual environment to manage all the dependencies. If you did not install conda before, please install [conda](https://anaconda.org/anaconda/conda)/[mamba](https://github.com/conda-forge/miniforge) first.
 
@@ -76,14 +76,14 @@ pip install --no-deps bokeh==3.4.2 stlearn==0.4.12
 *<font color=red>Note:</font> Please note that if there is already an environment named "space" in conda/mamba, it will lead to a failure due to name conflict. Be sure to resolve any naming issues with the environment in advance.*
 
 
-For common installation issues, please refer to [FAQ](#4-faq-section4).
+For common installation issues, please refer to [FAQ](#4-faq).
 
 
-## 3. How to use Space {section3}
+## 3. How to use Space
 
 In this section, we will use a SRT dataset to provide a detailed introduction to the functionalities of Space.
 
-### 3.1 Preparing the Datasets {section3.1}
+### 3.1 Preparing the Datasets
 
 In the manuscript for Space, we present the results of Space on four different datasets. These datasets are:
 
@@ -124,13 +124,13 @@ Space/
 ```
 
 
-### 3.2 Performing Concensus Clsutering using Space (Reproducibility) {section3.2}
+### 3.2 Performing Concensus Clsutering using Space (Reproducibility)
 
 In this section, we will show how to perform the Clsutering using Space.
 
 Also, to reproduce the results of our article, users can run the scripts in the **Demo** folder. The scripts are organized into two folders: **Reference_Methods** and **Reproduce_Scripts**. The **Reference_Methods** folder contains scripts for reproducing the results of the 10 SOTA algorithms. The **Reproduce_Scripts** folder contains scripts for reproducing the results of the Space.
 
-#### 3.2.1 Step-by-step Tutorial for Procesing Breast Cancer Dataset {section3.2.1}
+#### 3.2.1 Step-by-step Tutorial for Procesing Breast Cancer Dataset
 
 Here, for quick illustration, we directly apply Space to the results obtained from 10 SOTA methods. These methods have already been executed. The scripts are saved in **Reference_Methods** folder. The results of these methods are saved in the **Data** folder.
 
@@ -338,7 +338,7 @@ sc.pl.violin(adata, ['PBX1', 'KRT18', 'COX6C'], groupby='Space')
     padding: 2px;">Consistency between different methods</div>
 </center>
 
-### 3.3 Performing domain identification in a pipeline manner {section3.3}
+### 3.3 Performing domain identification in a pipeline manner
 
 For user convenience, we also provide a pipeline code that allows for the one-time execution of all methods. Here, we mainly introduce the interface in Space.
 
@@ -398,7 +398,7 @@ python demo_pipeline.py
 ```
 
 
-### 3.4 How to selecte different methods by hand {section3.4}
+### 3.4 How to selecte different methods by hand
 
 Sometimes, particularly when it involves known prior knowledge (such as morphological knowledge), users may wish to manually filter the results of de-identification. Space retains an interface for manual screening. Here, we provide a specific code example using the MERFISH dataset to demonstrate how to perform manual filtering.
 
@@ -498,7 +498,7 @@ print(ari)
 The final ARI is **0.674**.
 
 
-## 4 FAQ {section4}
+## 4 FAQ
 
 ### 4.1 Too many open files: '/proc/cpuinfo'
 
@@ -540,6 +540,6 @@ mamba remove -n space -y --all
 ```
 
 
-## 5 Citation {section5}
+## 5 Citation
 
 Please see citation widget on the sidebar.
