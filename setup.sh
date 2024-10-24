@@ -101,22 +101,4 @@ fi
 echo -e "${YELLOW}Creating environment using $PACKAGE_MANAGER...${NC}"
 $PACKAGE_MANAGER env create -f environment.yml
 
-# 4. Execute pip install command
-# activate space
-$PACKAGE_MANAGER init
-$PACKAGE_MANAGER activate space
-
-# check environment name
-CURRENT_ENV=$(basename "$CONDA_PREFIX")
-
-if [ "$CURRENT_ENV" != "space" ]; then
-    echo "Error: Current environment is not 'space'."
-    exit 1
-else
-    echo "Successfully activated environment: $CURRENT_ENV"
-fi
-
-echo -e "${YELLOW}Installing Python packages...${NC}"
-pip install --no-deps bokeh==3.4.2 stlearn==0.4.12
-
 echo -e "${GREEN}Script execution completed.${NC}"
