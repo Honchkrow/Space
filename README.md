@@ -2,7 +2,7 @@
 
 Reconciling Multiple Spatial Domain Identification Algorithms via Consensus Clustering
 
-## 1. Introduction
+## 1. Introduction {section1}
 
 **Space** is a spatial domain identification method from <u>spa</u>tially resolved transcriptomics (SRT) data using <u>c</u>onsensus clust<u>e</u>ring. It integrates **10 SOTA algorithms**. Space selects reliable algorithms by measuring their consistency. Then, it constructs a consensus matrix to integrate the outputs from multiple algorithms. We introduce **similarity loss**, **spatial loss**, and **low-rank loss** in Space to enhance accuracy and optimize computational efficiency.
 
@@ -47,7 +47,7 @@ Space/
 ```
 
 
-## 2. Installation Tutorial
+## 2. Installation Tutorial {section2}
 
 The deployment of Space requires a Linux/Unix machine. We recommend using [conda](https://anaconda.org/anaconda/conda)/[mamba](https://github.com/conda-forge/miniforge) and create a virtual environment to manage all the dependencies. If you did not install conda before, please install [conda](https://anaconda.org/anaconda/conda)/[mamba](https://github.com/conda-forge/miniforge) first.
 
@@ -75,16 +75,15 @@ pip install --no-deps bokeh==3.4.2 stlearn==0.4.12
 
 *<font color=red>Note:</font> Please note that if there is already an environment named "space" in conda/mamba, it will lead to a failure due to name conflict. Be sure to resolve any naming issues with the environment in advance.*
 
-*<font color=red>Note:</font> If you encounter the error **<font color=blue>Too many open files: '/proc/cpuinfo'</font>**, it means that the number of open files has exceeded the limits set by the Linux system during the environment installation. You can resolve this issue by using the command "ulimit -n number". A non-root user can set this limit to a maximum of 4096 with "ulimit -n 4096". However, we recommend that the root user set the limit to "ulimit -n 65535".*
 
-*<font color=red>Note:</font> If errors about **<font color=blue>unavailable or invalid channel</font>** occur, please check that whether the **.condarc** file in your ~ directory had been modified. Modifing .condarc file may cause wrong channel error. In this case, just rename/backup your .condarc file. Once the installation finished, this file can be recoveried. Of course, you can delete .condarc file if necessary.*
+For common installation issues, please refer to [FAQ](#4-faq-section4).
 
 
-## 3. How to use Space
+## 3. How to use Space {section3}
 
 In this section, we will use a SRT dataset to provide a detailed introduction to the functionalities of Space.
 
-### 3.1 Preparing the Datasets
+### 3.1 Preparing the Datasets {section3.1}
 
 In the manuscript for Space, we present the results of Space on four different datasets. These datasets are:
 
@@ -125,13 +124,13 @@ Space/
 ```
 
 
-### 3.2 Performing Concensus Clsutering using Space (Reproducibility)
+### 3.2 Performing Concensus Clsutering using Space (Reproducibility) {section3.2}
 
 In this section, we will show how to perform the Clsutering using Space.
 
 Also, to reproduce the results of our article, users can run the scripts in the **Demo** folder. The scripts are organized into two folders: **Reference_Methods** and **Reproduce_Scripts**. The **Reference_Methods** folder contains scripts for reproducing the results of the 10 SOTA algorithms. The **Reproduce_Scripts** folder contains scripts for reproducing the results of the Space.
 
-#### 3.2.1 Step-by-step Tutorial for Procesing Breast Cancer Dataset
+#### 3.2.1 Step-by-step Tutorial for Procesing Breast Cancer Dataset {section3.2.1}
 
 Here, for quick illustration, we directly apply Space to the results obtained from 10 SOTA methods. These methods have already been executed. The scripts are saved in **Reference_Methods** folder. The results of these methods are saved in the **Data** folder.
 
@@ -339,7 +338,7 @@ sc.pl.violin(adata, ['PBX1', 'KRT18', 'COX6C'], groupby='Space')
     padding: 2px;">Consistency between different methods</div>
 </center>
 
-### 3.3 Performing domain identification in a pipeline manner
+### 3.3 Performing domain identification in a pipeline manner {section3.3}
 
 For user convenience, we also provide a pipeline code that allows for the one-time execution of all methods. Here, we mainly introduce the interface in Space.
 
@@ -399,7 +398,7 @@ python demo_pipeline.py
 ```
 
 
-### 3.4 How to selecte different methods by hand
+### 3.4 How to selecte different methods by hand {section3.4}
 
 Sometimes, particularly when it involves known prior knowledge (such as morphological knowledge), users may wish to manually filter the results of de-identification. Space retains an interface for manual screening. Here, we provide a specific code example using the MERFISH dataset to demonstrate how to perform manual filtering.
 
@@ -499,6 +498,48 @@ print(ari)
 The final ARI is **0.674**.
 
 
-## 4 Citation
+## 4 FAQ {section4}
+
+### 4.1 Too many open files: '/proc/cpuinfo'
+
+If you encounter the error **<font color=blue>Too many open files: '/proc/cpuinfo'</font>**, it means that the number of open files has exceeded the limits set by the Linux system during the environment installation. You can resolve this issue by using the command "ulimit -n number". A non-root user can set this limit to a maximum of 4096 with "ulimit -n 4096". However, we recommend that the root user set the limit to "ulimit -n 65535".*
+
+### 4.2 Unavailable or invalid channel
+
+If errors about **<font color=blue>unavailable or invalid channel</font>** occur, please check that whether the **.condarc** file in your ~ directory had been modified. Modifing .condarc file may cause wrong channel error. In this case, just rename/backup your .condarc file. Once the installation finished, this file can be recoveried. Of course, you can delete .condarc file if necessary.*
+
+### 4.3 CUDA version mismatch
+
+When running the **setup.sh** script, users may encounter an error indicating that the CUDA version is incompatible with the installed packages (such as torch_scatter and torch-sparse). This issue arises because CUDA is required for compiling torch_scatter and torch-sparse. The version of CUDA required by Space is 11.3.1. To resolve this issue, you can install the cudatoolkit using conda or mamba.
+
+Next, create a new environment and install cudatoolkit.
+
+```shell
+mamba create -n cuda_11.3.1
+mamba install conda-forge::cudatoolkit-dev=11.3.1
+```
+
+Then, add the following content to the "~/.bashrc".
+
+```shell
+# please change the path to your own
+export PATH="/home/zw/software/miniforge3/envs/cuda_11.3.1/pkgs/cuda-toolkit/bin:$PATH"
+```
+Next, you can either open a new console or activate the  CUDA by running "source ~/.bashrc".
+
+You can the cuda version.
+
+```shell
+nvcc --version
+```
+
+Now, you can reinstall using the tutorial above. Please note to  delete the previously installed environment named "space". Otherwise, you will receive an error stating that the environment already exists (but the environment is incomplete).
+
+```shell
+mamba remove -n space -y --all
+```
+
+
+## 5 Citation {section5}
 
 Please see citation widget on the sidebar.
