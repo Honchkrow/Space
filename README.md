@@ -510,7 +510,7 @@ If errors about **<font color=blue>unavailable or invalid channel</font>** occur
 
 ### 4.3 CUDA version mismatch
 
-When running the **setup.sh** script, users may encounter an error indicating that the CUDA version is incompatible with the installed packages (such as torch_scatter and torch-sparse). This issue arises because CUDA is required for compiling torch_scatter and torch-sparse. The version of CUDA required by Space is 11.3.1. To resolve this issue, you can install the cudatoolkit using conda or mamba.
+When running the **setup.sh** script, users may encounter an error indicating that **<font color=blue>the CUDA version is incompatible with the installed packages (such as torch_scatter and torch-sparse)</font>**. This issue arises because CUDA is required for compiling torch_scatter and torch-sparse. The version of CUDA required by Space is 11.3.1. To resolve this issue, you can install the cudatoolkit using conda or mamba.
 
 Next, create a new environment and install cudatoolkit.
 
