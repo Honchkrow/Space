@@ -146,11 +146,11 @@ import Space
 from sklearn.metrics import adjusted_rand_score
 from sklearn.cluster import SpectralClustering
 from Space.cons_func import get_results, get_domains
-from Space.utils import calculate_location_adj, plot_results_ari, get_bool_martix
+from Space.utils import calculate_location_adj, plot_results_ari, get_bool_martix, plot_ari_with_removal
 
 # Some methods need mclust.
 # Please modify this path!
-os.environ["R_HOME"] = "/home/zw/software/miniforge-pypy3/envs/space/lib/R"
+os.environ["R_HOME"] = "/home/zw/software/miniforge3/envs/space/lib/R"
 ```
 
 Next, load the dataset.
@@ -247,12 +247,10 @@ model = Space.Space(
 con_martix = model.train()
 
 # set spectral cluster model
-sc = SpectralClustering(n_clusters=k, affinity="precomputed", random_state=666)
+sClustering = SpectralClustering(n_clusters=k, affinity="precomputed", random_state=666)
 
 # clustering
-labels = sc.fit_predict(con_martix)
-
-adata.obs["consensus"] = labels
+labels = sClustering.fit_predict(con_martix)
 
 ari = adjusted_rand_score(labels, gt.values)
 
@@ -324,7 +322,7 @@ We can compare the genes from different domain.
 We can also visual the distribution of genes across all domains.
 
 ```python
-sc.pl.violin(adata, ['PBX1', 'KRT18', 'COX6C'], groupby='Space')
+sc.pl.violin(adata, ['TCEAL4', 'MUC1', 'KRT18'], groupby='Space')
 ```
 
 <center>
