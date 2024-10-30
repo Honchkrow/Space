@@ -2,7 +2,7 @@ import os
 import scanpy as sc
 import pandas as pd
 
-os.environ["R_HOME"] = "/home/zw/software/miniforge-pypy3/envs/space/lib/R"
+os.environ["R_HOME"] = "/home/zw/software/miniforge3/envs/space/lib/R"
 import Space
 from Space.cons_func import (
     run_GraphST,
@@ -24,6 +24,7 @@ from Space.utils import (
     plot_results_ari,
     get_bool_martix,
     plot_ari_with_removal,
+    refine_label,
 )
 
 adata = sc.read_visium(
@@ -47,7 +48,7 @@ adata.obsm["im_re"] = im_re
 adata.obs["gt"] = Ann_df["fine_annot_type"]
 gt = adata.obs["gt"]
 k = 20
-epochs = 1000
+epochs = 150
 seed = 666
 alpha = 1
 learning_rate = 0.0001
@@ -81,7 +82,7 @@ func_dict = {
 collected_results = get_results(func_dict, use_multithreading=False, monitor_performance=True)
 mul_reults = get_domains(adata, collected_results)
 
-mul_reults = plot_ari_with_removal(mul_reults, 7)
+mul_reults = plot_ari_with_removal(mul_reults, 8)
 
 
 pos_similarity = calculate_location_adj(adata.obsm["spatial"], l=123)
@@ -104,4 +105,10 @@ adata.obs["Space"] = labels
 adata.obs["Space"] = adata.obs["Space"].astype("str")
 ari = adjusted_rand_score(labels, gt.values)
 print(ari)
+
+new_type = refine_label(adata, 70, key='Space')
+adata.obs['Space_refined'] = new_type
+
+ari = adjusted_rand_score(new_type, gt.values)
+print("refined",ari)
 

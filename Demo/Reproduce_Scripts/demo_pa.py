@@ -2,7 +2,7 @@ import os
 import scanpy as sc
 import pandas as pd
 
-os.environ["R_HOME"] = "/home/zw/software/miniforge-pypy3/envs/space/lib/R"
+os.environ["R_HOME"] = "/home/zw/software/miniforge3/envs/space/lib/R"
 import Space
 from Space.cons_func import (
     run_GraphST,
@@ -58,7 +58,7 @@ func_dict = {
 
 # To save time and ensure the stability of the results, we can use the results we obtained in advance:
 # mul_reults : "../Data/SRARmap_pa/result1.csv"
-mul_reults = pd.read_csv(f"Data/SRARmap_pa/result{slide_id}.csv", header=0, index_col=0)
+mul_reults = pd.read_csv(f"./Data/SRARmap_pa/result{slide_id}.csv", header=0, index_col=0)
 mul_reults = mul_reults.iloc[:, 2:]
 # or
 """collected_results = get_results(func_dict, use_multithreading=True, monitor_performance=True)

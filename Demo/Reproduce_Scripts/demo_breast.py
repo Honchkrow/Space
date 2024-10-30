@@ -2,7 +2,7 @@ import os
 import scanpy as sc
 import pandas as pd
 
-os.environ["R_HOME"] = "/home/zw/software/miniforge-pypy3/envs/space/lib/R"
+os.environ["R_HOME"] = "/home/zw/software/miniforge3/envs/space/lib/R"
 import Space
 from Space.cons_func import (
     run_GraphST,
@@ -41,8 +41,8 @@ im_re = pd.read_csv(
 adata.obsm["im_re"] = im_re
 adata.obs["gt"] = Ann_df["fine_annot_type"]
 gt = adata.obs["gt"]
-k = 20  # n_clusters
-epochs = 120 # 100是0.63 120 是0.65
+k = 20
+epochs = 120
 seed = 666
 alpha = 1
 learning_rate = 0.0001

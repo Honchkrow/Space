@@ -2,7 +2,7 @@ import os
 import scanpy as sc
 import pandas as pd
 
-os.environ["R_HOME"] = "/home/zw/software/miniforge-pypy3/envs/space/lib/R"
+os.environ["R_HOME"] = "/home/zw/software/miniforge3/envs/space/lib/R"
 import Space
 slide_id = "19"
 from Space.cons_func import (
