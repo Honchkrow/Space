@@ -319,7 +319,7 @@ We can compare the genes from different domain.
 </center>
 
 
-We can also visual the distribution of genes across all domains.
+We can also visual the distribution of genes across all domains. The detected genes are highly expressed in domain 2.
 
 ```python
 sc.pl.violin(adata, ['TCEAL4', 'MUC1', 'KRT18'], groupby='Space')
