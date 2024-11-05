@@ -49,7 +49,7 @@ Space/
 
 ## 2. Installation Tutorial
 
-The deployment of Space requires a Linux/Unix machine. We recommend using [conda](https://anaconda.org/anaconda/conda)/[mamba](https://github.com/conda-forge/miniforge) and create a virtual environment to manage all the dependencies. If you did not install conda before, please install [conda](https://anaconda.org/anaconda/conda)/[mamba](https://github.com/conda-forge/miniforge) first.
+The deployment of Space requires a Linux/Unix machine with **GPU**. We recommend using [conda](https://anaconda.org/anaconda/conda)/[mamba](https://github.com/conda-forge/miniforge) and create a virtual environment to manage all the dependencies. If you did not install conda before, please install [conda](https://anaconda.org/anaconda/conda)/[mamba](https://github.com/conda-forge/miniforge) first.
 
 We provide the environment file, allowing users to quickly deploy Space using the following command.
 
