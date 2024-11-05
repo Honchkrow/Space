@@ -502,11 +502,11 @@ The final ARI is **0.674**.
 
 ### 4.1 Too many open files: '/proc/cpuinfo'
 
-If you encounter the error **<font color=blue>Too many open files: '/proc/cpuinfo'</font>**, it means that the number of open files has exceeded the limits set by the Linux system during the environment installation. You can resolve this issue by using the command "ulimit -n number". A non-root user can set this limit to a maximum of 4096 with "ulimit -n 4096". However, we recommend that the root user set the limit to "ulimit -n 65535".*
+If you encounter the error **<font color=blue>Too many open files: '/proc/cpuinfo'</font>**, it means that the number of open files has exceeded the limits set by the Linux system during the environment installation. You can resolve this issue by using the command "ulimit -n number". A non-root user can set this limit to a maximum of 4096 with "ulimit -n 4096". However, we recommend that the root user set the limit to "ulimit -n 65535".
 
 ### 4.2 Unavailable or invalid channel
 
-If errors about **<font color=blue>unavailable or invalid channel</font>** occur, please check that whether the **.condarc** file in your ~ directory had been modified. Modifing .condarc file may cause wrong channel error. In this case, just rename/backup your .condarc file. Once the installation finished, this file can be recoveried. Of course, you can delete .condarc file if necessary.*
+If errors about **<font color=blue>unavailable or invalid channel</font>** occur, please check that whether the **.condarc** file in your ~ directory had been modified. Modifing .condarc file may cause wrong channel error. In this case, just rename/backup your .condarc file. Once the installation finished, this file can be recoveried. Of course, you can delete .condarc file if necessary.
 
 ### 4.3 CUDA version mismatch
 
