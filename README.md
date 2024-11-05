@@ -73,6 +73,8 @@ conda activate space  # or "mamba activate space"
 pip install --no-deps bokeh==3.4.2 stlearn==0.4.12
 ```
 
+*<font color=red>Note:</font> Space requires CUDA version 11.3.1. If your current CUDA version is inconsistent with this requirement, please refer to [this tutorial](#43-cuda-version-mismatch) to adjust it before proceeding with the installation.*
+
 *<font color=red>Note:</font> Please note that if there is already an environment named "space" in conda/mamba, it will lead to a failure due to name conflict. Be sure to resolve any naming issues with the environment in advance.*
 
 
